@@ -37,7 +37,10 @@ app.get("/api/health", (req, res) => {
   res.send("API is running...");
 });
 
-// Use centralized routes
+import swaggerRoutes from "./modules/swagger.route";
+
+// Use Swagger documentation route
+app.use(swaggerRoutes);
 app.use("/api", routes);
 /* --------- Global error handler (should be last middleware) --- */
 app.use(globalErrorHandler);

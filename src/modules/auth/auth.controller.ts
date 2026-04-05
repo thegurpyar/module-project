@@ -311,7 +311,7 @@ export const registerUser = async (req, res) => {
     }
 
     // Check existing user
-    let user = await User.findOne({ number });
+    let user = await User.findOne({ number,isDeleted:false });
 
     // If user exists → handle status
     if (user) {
@@ -356,7 +356,7 @@ export const registerUser = async (req, res) => {
       otpValidTill: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    user.otp = null
+    // user.otp = null
     //temporay send otp
     return successResponse(res, user, "User registered successfully");
 
