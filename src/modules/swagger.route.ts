@@ -15,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000', // URL for the API server
+        url: 'https://07fc-2409-40d1-467-60fb-5c26-7ab1-7057-bba2.ngrok-free.app', // URL for the API server
       },
     ],
   },

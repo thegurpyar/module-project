@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
     },
     number:{
         type:String,
-        required:true,
     },
     status:{
         type:Number,

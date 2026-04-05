@@ -49,15 +49,6 @@ router.post("/verify-otp", verifyOtp);
  *           schema:
  *             type: object
  *             properties:
- *               role:
- *                 type: string
- *                 example: user
- *               name:
- *                 type: string
- *                 example: Gurpyar
- *               number:
- *                 type: string
- *                 example: "9876543210"
  *               email:
  *                 type: string
  *                 example: admin@mail.com

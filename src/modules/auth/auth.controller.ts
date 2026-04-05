@@ -381,6 +381,9 @@ export const verifyOtp = async (req, res) => {
       return errorResponse(res, "User not found", 404);
     }
 
+    if(user.otpVerified){
+      return errorResponse(res, "Otp already verified", 400);
+    }
     if (user.otp !== otp) {
       return errorResponse(res, "Invalid OTP", 401);
     }

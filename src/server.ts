@@ -8,8 +8,12 @@ dotenv.config();
 import { globalErrorHandler } from "./middlewares/errorHandler";
 import { createServer } from "http";
 import { initializeSocket } from "./modules/chat/chat";
+import { seedAdminUsers } from "./modules/seed/seed";
 
-connectDB();
+connectDB().then(() => {
+  seedAdminUsers(); // 🔥 auto create admin + agent
+});
+
 const app = express();
 const httpServer = createServer(app);
 const io = initializeSocket(httpServer);
@@ -47,7 +51,3 @@ app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// //web socket server
-// const SOCKET_PORT = process.env.SOCKET_PORT || 5000;
-// httpServer.listen(SOCKET_PORT, () => console.log(`Socket server running on port ${SOCKET_PORT}`));
