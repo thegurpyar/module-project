@@ -348,7 +348,7 @@ export const registerUser = async (req, res) => {
     }
 
     // ================= NEW USER =================
-    const otp = "9999"||generateOTP(); // ✅ correct
+    const otp = "9999"; // ✅ correct
 
     if (user && !user.otpVerified){
       user.otp = otp;
@@ -477,7 +477,7 @@ export const resendOtp = async (req, res) => {
     }
 
     // ✅ Generate new OTP
-    const otp = "9999"||generateOTP();
+    const otp = "9999"
 
     user.otp = otp;
     user.otpValidTill = new Date(Date.now() + 10 * 60 * 1000); // 10 min
