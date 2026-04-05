@@ -18,22 +18,25 @@ const app = express();
 const httpServer = createServer(app);
 const io = initializeSocket(httpServer);
 
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? process.env.FRONTEND_URL
-        : ["http://localhost:3000","http://localhost:3001", "http://127.0.0.1:3000","http://127.0.0.1:3001", "https://inspiring-medovik-b801f4.netlify.app"], // ✅ Add both
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "ngrok-skip-browser-warning",
-    ],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin:
+//       process.env.NODE_ENV === "production"
+//         ? process.env.FRONTEND_URL
+//         : ["http://localhost:3000","http://localhost:3001", "http://127.0.0.1:3000","http://127.0.0.1:3001", "https://inspiring-medovik-b801f4.netlify.app"], // ✅ Add both
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+//     allowedHeaders: [
+//       "Content-Type",
+//       "Authorization",
+//       "ngrok-skip-browser-warning",
+//     ],
+//     credentials: true,
+//   })
+// );
 
+app.use(cors({
+  origin: "*",
+}));
 // Body parser
 app.use(express.json());
 
