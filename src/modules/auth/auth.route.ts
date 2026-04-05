@@ -19,7 +19,7 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/logout", logout);
-router.post("/refresh", auth,refreshToken);
+router.post("/refresh", refreshToken);
 router.get("/me",auth, getMe);
 router.delete("/delete",auth, deleteUser);
 router.post("/change-password",auth, changePassword);

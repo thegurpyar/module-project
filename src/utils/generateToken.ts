@@ -23,7 +23,7 @@ export const generateToken = (user: User) => {
   const accessToken = jwt.sign(
     { id: user._id.toString(), role: user.role },
     accessSecret,
-    { expiresIn: "15m" }   // Best practice
+    { expiresIn: "1m" }   // Best practice
   );
 
   // 2. Refresh Token (long expiry)

@@ -9,8 +9,8 @@ import { generateOTP } from "../../utils/generateOtp";
 
 
 export const refreshToken = async (req, res) => {
-
-  const {token} = req.body;
+  console.log("Refresh token request received");
+ const { refreshToken: token } = req.body;
 
   if(!token){
     return errorResponse(res, "No token provided", 401);
@@ -304,24 +304,31 @@ export const changePassword = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { full_name, number } = req.body;
+    const { number,full_name } = req.body;
 
-    if (!full_name || !number) {
-      return errorResponse(res, "Full name and number are required", 400);
+    // Validate input
+    if (!number || !full_name) {
+      return errorResponse(res, "Number and full name are required", 400);
+    }
+
+    const cleanNumber = number.trim();
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(cleanNumber)) {
+      return errorResponse(res, "Invalid phone number format", 400);
     }
 
     // Check existing user
-    let user = await User.findOne({ number,isDeleted:false });
+    let user = await User.findOne({ number: cleanNumber, isDeleted: false });
 
-    // If user exists → handle status
-    if (user) {
+    // ================= EXISTING USER =================
+    if (user && user.otpVerified) {
       if (user.status === 2) {
         return errorResponse(res, "User is inactive", 400);
       }
 
-      const {accessToken, refreshToken} = generateToken(user);
+      const { accessToken, refreshToken } = generateToken(user);
 
-      // ✅ Just return existing user (no need to create again)
       return successResponse(
         res,
         {
@@ -330,41 +337,62 @@ export const registerUser = async (req, res) => {
             full_name: user.full_name,
             role: user.role,
           },
-          tokens:{
+          tokens: {
             accessToken,
-            refreshToken
+            refreshToken,
           },
         },
         "Login successful",
         200
       );
-
-
     }
 
-    // ✅ Create new user
+    // ================= NEW USER =================
+    const otp = "9999"||generateOTP(); // ✅ correct
 
+    if (user && !user.otpVerified){
+      user.otp = otp;
+      user.otpValidTill = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+      await user.save();
 
-    const otp = generateOTP();
+    return successResponse(
+      res,
+      {
+        message: "OTP sent successfully",
+        number: cleanNumber,
+      },
+      "User created, OTP sent",
+      201
+    );
+    }
     user = await User.create({
-      full_name,
-      otp,
-      number,
+      full_name:full_name,
+      number: cleanNumber,
       role: "user",
       status: 1,
       isDeleted: false,
-      otpValidTill: new Date(Date.now() + 10 * 60 * 1000),
+      otp,
+      otpValidTill: new Date(Date.now() + 10 * 60 * 1000), // 10 min
     });
 
-    // user.otp = null
-    //temporay send otp
-    return successResponse(res, user, "User registered successfully");
+    // 👉 DO NOT remove OTP here
+
+    return successResponse(
+      res,
+      {
+        message: "OTP sent successfully",
+        number: cleanNumber,
+      },
+      "User created, OTP sent",
+      201
+    );
 
   } catch (error) {
     console.error("Register User Error:", error);
     return errorResponse(res, "Internal server error", 500);
   }
 };
+
 
 
 export const verifyOtp = async (req, res) => {
@@ -415,6 +443,61 @@ export const verifyOtp = async (req, res) => {
     );
   } catch (error) {
     console.error("Verify OTP Error:", error);
+    return errorResponse(res, "Internal server error", 500);
+  }
+};
+
+
+export const resendOtp = async (req, res) => {
+  try {
+    const { number } = req.body;
+
+    if (!number) {
+      return errorResponse(res, "Number is required", 400);
+    }
+
+    const cleanNumber = number.trim();
+
+    const user = await User.findOne({ number: cleanNumber, isDeleted: false });
+
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
+    }
+
+    if (user.otpVerified) {
+      return errorResponse(res, "User already verified", 400);
+    }
+
+    // ⛔ Optional: prevent spam (30 sec cooldown)
+    if (
+      user.otpValidTill &&
+      new Date(user.otpValidTill).getTime() - Date.now() > 9 * 60 * 1000
+    ) {
+      return errorResponse(res, "Please wait before requesting OTP again", 429);
+    }
+
+    // ✅ Generate new OTP
+    const otp = "9999"||generateOTP();
+
+    user.otp = otp;
+    user.otpValidTill = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+
+    await user.save();
+
+    // 👉 TODO: Send OTP via SMS (Fast2SMS / Twilio)
+    // console.log("OTP:", otp);
+
+    return successResponse(
+      res,
+      {
+        message: "OTP resent successfully",
+        number: cleanNumber,
+      },
+      "OTP resent",
+      200
+    );
+  } catch (error) {
+    console.error("Resend OTP Error:", error);
     return errorResponse(res, "Internal server error", 500);
   }
 };

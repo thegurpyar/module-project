@@ -56,7 +56,7 @@ export interface IUser {
     full_name: string;
     otp: string;
     otpVerified: boolean;
-    number: string;
+    number?: string;
     status: number;
     isDeleted: boolean;
     passwordChangedAt: Date | null;

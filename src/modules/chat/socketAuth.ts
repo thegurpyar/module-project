@@ -38,6 +38,10 @@ export const socketAuth = async (socket: AuthenticatedSocket, next: (err?: Error
       return next(new Error("User not found"));
     }
 
+    if(user.role ==="user" && !user.otpVerified){
+      return next(new Error("User not verified"));
+    }
+
     if (
       user.passwordChangedAt &&
       decoded.iat &&

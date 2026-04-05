@@ -13,7 +13,7 @@ declare global {
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.access_token;
+    const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
@@ -34,6 +34,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
+    if(user.role ==="user" && !user.otpVerified){
+      return res.status(401).json({ message: 'User not verified' });
+    }
     if(user.status !== 1){
           return res.status(400).json({
             message:"Account inactive please contact support"
@@ -61,6 +64,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({ message: 'Invalid token' });
     }
+    console.log(error,"--0-00--")
     return res.status(500).json({ message: 'Authentication failed' });
   }
 };
