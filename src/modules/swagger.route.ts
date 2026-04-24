@@ -18,7 +18,10 @@ const swaggerOptions = {
         url: 'https://d4f4-2409-40d1-40b-60bc-78d0-a52c-32d7-6821.ngrok-free.app/', // URL for the API server
       },
       {
-        url: 'http://localhost:5000', // URL for the API server
+        url: 'https://module-project-tx70.onrender.com/', // URL for the API server
+      },
+      {
+        url: 'http://localhost:5000/', // URL for the API server
       },
     ],
     components: {
