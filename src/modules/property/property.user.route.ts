@@ -6,6 +6,7 @@ import {
   deleteProperty,
   getUserProperties,
   getProperties,
+  markPropertyAsSold,
 } from "./property.user.controller";
 
 const router = Router();
@@ -487,6 +488,96 @@ router.delete("/:propertyId", deleteProperty);
  *         description: Unauthorized
  *       500:
  *         description: Internal server error
+ */
+
+router.patch("/:propertyId/mark-sold", markPropertyAsSold);
+
+/**
+ * @swagger
+ * /api/property/user/{propertyId}/mark-sold:
+ *   patch:
+ *     summary: Mark property as sold (only owner)
+ *     tags: [Property User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: propertyId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Property ID
+ *     responses:
+ *       200:
+ *         description: Property marked as sold successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Property marked as sold successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     property:
+ *                       $ref: '#/components/schemas/Property'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: Forbidden - Not property owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: Property not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Property not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to mark property as sold"
  */
 
 router.get("/", getUserProperties);

@@ -230,3 +230,36 @@ export const getUserProperties = async (
     );
   }
 };
+
+
+export const markPropertyAsSold = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { propertyId } = req.params;
+
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      return errorResponse(res, "Property not found", 404);
+    }
+
+    if (property.userId.toString() !== req.userId) {
+      return errorResponse(res, "Unauthorized", 403);
+    }
+
+    property.status = "sold";
+
+    await property.save();
+
+    return successResponse(
+      res,
+      { property },
+      "Property marked as sold successfully"
+    );
+  } catch (error) {
+    console.error("Error marking property as sold:", error);
+    return errorResponse(res, "Failed to mark property as sold", 500);
+  }
+};
