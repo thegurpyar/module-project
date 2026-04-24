@@ -14,7 +14,7 @@ connectDB().then(() => {
   seedAdminUsers(); // 🔥 auto create admin + agent
 });
 
-const app = express();
+const app = express();  
 const httpServer = createServer(app);
 const io = initializeSocket(httpServer);
 
@@ -36,7 +36,13 @@ const io = initializeSocket(httpServer);
 
 app.use(cors({
   origin: "*",
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "ngrok-skip-browser-warning",
+  ],
 }));
+
 // Body parser
 app.use(express.json());
 

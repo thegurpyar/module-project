@@ -15,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://74aa-2409-40d1-467-60fb-63c3-447f-e3ed-dffe.ngrok-free.app/', // URL for the API server
+        url: 'https://d4f4-2409-40d1-40b-60bc-78d0-a52c-32d7-6821.ngrok-free.app/', // URL for the API server
       },
       {
         url: 'http://localhost:5000', // URL for the API server
@@ -44,13 +44,20 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
   explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Property Rental API Documentation",
   swaggerOptions: {
     persistAuthorization: true,
     displayRequestDuration: true,
     filter: true,
     showExtensions: true,
     showCommonExtensions: true,
-    docExpansion: 'none'
+    docExpansion: 'none',
+    tryItOutEnabled: true,
+    operationsSorter: 'alpha',
+    tagsSorter: 'alpha',
+    defaultModelsExpandDepth: 2,
+    defaultModelExpandDepth: 2,
   }
 }));
 

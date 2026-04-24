@@ -15,12 +15,14 @@ import { auth } from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 
+router.get("/me",auth, getMe);
+
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/logout", logout);
 router.post("/refresh", refreshToken);
-router.get("/me",auth, getMe);
+
 router.delete("/delete",auth, deleteUser);
 router.post("/change-password",auth, changePassword);
 
@@ -152,6 +154,70 @@ router.post("/verify-otp", verifyOtp);
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User retrieved successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "64a1b2c3d4e5f6789012345"
+ *                     full_name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "john@example.com"
+ *                     number:
+ *                       type: string
+ *                       example: "9876543210"
+ *                     role:
+ *                       type: string
+ *                       example: "user"
+ *                     status:
+ *                       type: number
+ *                       example: 1
+ *                     otpVerified:
+ *                       type: boolean
+ *                       example: true
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User not authenticated"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
  */
 
 /**
