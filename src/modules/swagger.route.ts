@@ -29,6 +29,155 @@ const swaggerOptions = {
           bearerFormat: 'JWT',
           description: 'Enter your JWT token here'
         }
+      },
+      schemas: {
+        Property: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              example: '64a1b2c3d4e5f6789012345'
+            },
+            title: {
+              type: 'string',
+              example: 'Beautiful 3BHK Apartment in Delhi'
+            },
+            slug: {
+              type: 'string',
+              example: 'beautiful-3bhk-apartment-in-delhi'
+            },
+            purpose: {
+              type: 'string',
+              enum: ['rent', 'sale'],
+              example: 'rent'
+            },
+            category: {
+              type: 'string',
+              enum: ['flat', 'apartment', 'house', 'villa', 'studio', 'pg', 'shop', 'office', 'plot', 'warehouse'],
+              example: 'apartment'
+            },
+            price: {
+              type: 'number',
+              example: 25000
+            },
+            priceType: {
+              type: 'string',
+              enum: ['monthly', 'yearly', 'total'],
+              example: 'monthly'
+            },
+            bhk: {
+              type: 'number',
+              example: 3
+            },
+            bathrooms: {
+              type: 'number',
+              example: 2
+            },
+            totalArea: {
+              type: 'number',
+              example: 1200
+            },
+            areaUnit: {
+              type: 'string',
+              enum: ['sqft', 'sqm', 'marla', 'kanal', 'acre'],
+              example: 'sqft'
+            },
+            city: {
+              type: 'string',
+              example: 'Delhi'
+            },
+            sector: {
+              type: 'string',
+              example: 'Sector 15'
+            },
+            locality: {
+              type: 'string',
+              example: 'Rohini'
+            },
+            landmark: {
+              type: 'string',
+              example: 'Near Metro Station'
+            },
+            fullAddress: {
+              type: 'string',
+              example: '123 Main Street, Rohini, Delhi'
+            },
+            coordinates: {
+              type: 'object',
+              properties: {
+                lat: {
+                  type: 'number',
+                  example: 28.7041
+                },
+                lng: {
+                  type: 'number',
+                  example: 77.1025
+                }
+              }
+            },
+            furnishing: {
+              type: 'string',
+              enum: ['unfurnished', 'semi-furnished', 'fully-furnished'],
+              example: 'semi-furnished'
+            },
+            parking: {
+              type: 'string',
+              enum: ['none', 'bike', 'car', 'both'],
+              example: 'car'
+            },
+            age: {
+              type: 'number',
+              example: 2
+            },
+            amenities: {
+              type: 'array',
+              items: {
+                type: 'string',
+                enum: ['lift', 'gym', 'power_backup', 'swimming_pool', 'security', 'clubhouse', 'park', 'near_market']
+              },
+              example: ['lift', 'gym', 'security']
+            },
+            description: {
+              type: 'string',
+              example: 'Spacious 3BHK apartment with modern amenities'
+            },
+            images: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  url: {
+                    type: 'string',
+                    example: 'https://example.com/image1.jpg'
+                  }
+                }
+              }
+            },
+            userId: {
+              type: 'string',
+              example: '64a1b2c3d4e5f6789012345'
+            },
+            status: {
+              type: 'string',
+              enum: ['available', 'sold', 'pending'],
+              example: 'pending'
+            },
+            featured: {
+              type: 'boolean',
+              example: false
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-07-01T10:30:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-07-01T10:30:00.000Z'
+            }
+          }
+        }
       }
     },
     security: [

@@ -162,12 +162,19 @@ city: {
       trim: true,
     },
 
-    images: [
-      {
-        url: String
-      },
-    ],
-
+images: {
+  type: [
+    {
+      url: String,
+    },
+  ],
+  validate: {
+    validator: function (arr) {
+      return arr.length >= 3 && arr.length <= 10;
+    },
+    message: "Images must be between 3 and 10",
+  },
+},
     // OWNER / AGENT
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -200,8 +207,8 @@ city: {
 ========================= */
 
 // Generate slug from title before saving
-propertySchema.pre("save", async function (next) {
-  if (!this.isModified("title")) return next();
+propertySchema.pre("save", async function () {
+  if (!this.isModified("title")) return;
 
   const Property = mongoose.model("Property");
 
@@ -218,7 +225,7 @@ propertySchema.pre("save", async function (next) {
   while (
     await Property.exists({
       slug,
-      _id: { $ne: this._id }, // exclude current document on update
+      _id: { $ne: this._id },
     })
   ) {
     slug = `${baseSlug}-${count}`;
@@ -226,18 +233,12 @@ propertySchema.pre("save", async function (next) {
   }
 
   this.slug = slug;
-
-  next();
 });
-
 /* =========================
    INDEXES FOR FAST FILTERING
 ========================= */
 
 propertySchema.index({ city: 1, purpose: 1, category: 1 });
-propertySchema.index({ price: 1 });
-propertySchema.index({ bhk: 1 });
-propertySchema.index({ totalArea: 1 });
 propertySchema.index({ amenities: 1 });
 propertySchema.index({ createdAt: -1 });
 

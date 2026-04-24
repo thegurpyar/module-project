@@ -21,6 +21,7 @@ export const addProperty = async (req: Request, res: Response) => {
       "Property added successfully"
     );
   } catch (error) {
+    console.error("Error adding property:", error);
     return errorResponse(res, "Failed to add property", 500);
   }
 };
