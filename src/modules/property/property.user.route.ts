@@ -60,6 +60,11 @@ const router = Router();
  *           enum: [available, sold]
  *         description: Filter by status
  *       - in: query
+ *         name: title
+ *         schema:
+ *           type: string
+ *         description: Search by title (case insensitive)
+ *       - in: query
  *         name: furnishing
  *         schema:
  *           type: string
@@ -186,15 +191,6 @@ router.use([auth, role("user")]);
  *               fullAddress:
  *                 type: string
  *                 example: "123 Main Street, Rohini, Delhi"
- *               coordinates:
- *                 type: object
- *                 properties:
- *                   lat:
- *                     type: number
- *                     example: 28.7041
- *                   lng:
- *                     type: number
- *                     example: 77.1025
  *               furnishing:
  *                 type: string
  *                 enum: [unfurnished, semi-furnished, fully-furnished]
@@ -277,12 +273,77 @@ router.post("/", addProperty);
  *               title:
  *                 type: string
  *                 example: "Updated Beautiful 3BHK Apartment"
+ *               purpose:
+ *                 type: string
+ *                 enum: [rent, sale]
+ *                 example: "rent"
+ *               category:
+ *                 type: string
+ *                 enum: [flat, apartment, house, villa, studio, pg, shop, office, plot, warehouse]
+ *                 example: "apartment"
  *               price:
  *                 type: number
  *                 example: 30000
+ *               priceType:
+ *                 type: string
+ *                 enum: [monthly, yearly, total]
+ *                 example: "monthly"
+ *               bhk:
+ *                 type: number
+ *                 example: 3
+ *               bathrooms:
+ *                 type: number
+ *                 example: 2
+ *               totalArea:
+ *                 type: number
+ *                 example: 1200
+ *               areaUnit:
+ *                 type: string
+ *                 enum: [sqft, sqm, marla, kanal, acre]
+ *                 example: "sqft"
+ *               city:
+ *                 type: string
+ *                 example: "Delhi"
+ *               sector:
+ *                 type: string
+ *                 example: "Sector 15"
+ *               locality:
+ *                 type: string
+ *                 example: "Rohini"
+ *               landmark:
+ *                 type: string
+ *                 example: "Near Metro Station"
+ *               fullAddress:
+ *                 type: string
+ *                 example: "123 Main Street, Rohini, Delhi"
+ *               furnishing:
+ *                 type: string
+ *                 enum: [unfurnished, semi-furnished, fully-furnished]
+ *                 example: "semi-furnished"
+ *               parking:
+ *                 type: string
+ *                 enum: [none, bike, car, both]
+ *                 example: "car"
+ *               age:
+ *                 type: number
+ *                 example: 2
+ *               amenities:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   enum: [lift, gym, power_backup, swimming_pool, security, clubhouse, park, near_market]
+ *                 example: ["lift", "gym", "security"]
  *               description:
  *                 type: string
  *                 example: "Updated description"
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       example: "https://example.com/image1.jpg"
  *     responses:
  *       200:
  *         description: Property updated successfully
@@ -379,6 +440,17 @@ router.delete("/:propertyId", deleteProperty);
  *           type: integer
  *           default: 10
  *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [available, sold, pending]
+ *         description: Filter by status
+ *       - in: query
+ *         name: title
+ *         schema:
+ *           type: string
+ *         description: Search by title (case insensitive)
  *     responses:
  *       200:
  *         description: User properties fetched successfully

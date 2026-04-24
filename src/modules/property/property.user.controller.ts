@@ -97,13 +97,17 @@ export const deleteProperty = async (req: Request, res: Response) => {
    GET ALL PROPERTIES
    Pagination + Filters
 ================================================== */
-export const getProperties = async (req: Request, res: Response) => {
+export const getProperties = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
     const {
+      title,
       city,
       purpose,
       category,
@@ -118,6 +122,14 @@ export const getProperties = async (req: Request, res: Response) => {
       status: { $in: ["available", "sold"] },
     };
 
+    // Search by title
+    if (title) {
+      filter.title = {
+        $regex: title,
+        $options: "i", // case insensitive
+      };
+    }
+
     if (city) filter.city = city;
     if (purpose) filter.purpose = purpose;
     if (category) filter.category = category;
@@ -127,6 +139,7 @@ export const getProperties = async (req: Request, res: Response) => {
 
     if (minPrice || maxPrice) {
       filter.price = {};
+
       if (minPrice) filter.price.$gte = Number(minPrice);
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
@@ -168,11 +181,26 @@ export const getUserProperties = async (
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    const {
+      status,
+      title
+    } = req.query;
 
-    const filter = {
+    const filter: any = {
       userId: req.userId,
     };
 
+    if (title) {
+      filter.title = {
+        $regex: title,
+        $options: "i", // case insensitive
+      };
+    }
+    
+    if (status) {
+      (filter as any).status = status;
+    }
+    
     const [properties, total] = await Promise.all([
       Property.find(filter)
         .sort({ createdAt: -1 })
