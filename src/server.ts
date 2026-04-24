@@ -40,6 +40,9 @@ app.use(cors({
 // Body parser
 app.use(express.json());
 
+// Serve static files from uploads directory
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 app.get("/api/health", (req, res) => {
   res.send("API is running...");
 });

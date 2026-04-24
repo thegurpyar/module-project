@@ -21,12 +21,37 @@ const swaggerOptions = {
         url: 'http://localhost:5000', // URL for the API server
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter your JWT token here'
+        }
+      }
+    },
+    security: [
+      {
+        bearerAuth: []
+      }
+    ]
   },
   apis: ['./src/modules/**/*.route.ts'], // Path to the API docs
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+  explorer: true,
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true,
+    showExtensions: true,
+    showCommonExtensions: true,
+    docExpansion: 'none'
+  }
+}));
 
 export default router;
