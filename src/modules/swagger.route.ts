@@ -177,6 +177,55 @@ const swaggerOptions = {
               example: '2023-07-01T10:30:00.000Z'
             }
           }
+        },
+        User: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              example: '64a1b2c3d4e5f6789012345'
+            },
+            full_name: {
+              type: 'string',
+              example: 'John Doe'
+            },
+            email: {
+              type: 'string',
+              example: 'john@example.com'
+            },
+            number: {
+              type: 'string',
+              example: '9876543210'
+            },
+            role: {
+              type: 'string',
+              enum: ['user', 'agent', 'admin'],
+              example: 'user'
+            },
+            status: {
+              type: 'number',
+              enum: [1, 2],
+              example: 1
+            },
+            otpVerified: {
+              type: 'boolean',
+              example: true
+            },
+            isDeleted: {
+              type: 'boolean',
+              example: false
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-07-01T10:30:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-07-01T10:30:00.000Z'
+            }
+          }
         }
       }
     },

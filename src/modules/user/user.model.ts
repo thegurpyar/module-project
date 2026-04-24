@@ -59,5 +59,6 @@ export interface IUser {
     number?: string;
     status: number;
     isDeleted: boolean;
+    role: string;
     passwordChangedAt: Date | null;
 }
