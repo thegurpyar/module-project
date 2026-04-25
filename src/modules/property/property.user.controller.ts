@@ -263,3 +263,31 @@ export const markPropertyAsSold = async (
     return errorResponse(res, "Failed to mark property as sold", 500);
   }
 };
+
+
+export const getPropertyById = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { propertyId } = req.params;
+
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      return errorResponse(res, "Property not found", 404);
+    }
+
+    return successResponse(
+      res,
+      { property },
+      "Property fetched successfully"
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      "Failed to fetch property",
+      500
+    );
+  }
+};

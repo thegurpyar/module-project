@@ -7,6 +7,7 @@ import {
   getUserProperties,
   getProperties,
   markPropertyAsSold,
+  getPropertyById,
 } from "./property.user.controller";
 
 const router = Router();
@@ -121,6 +122,68 @@ const router = Router();
  */
 
 router.get("/public", getProperties);
+
+/**
+ * @swagger
+ * /api/property/user/public/{propertyId}:
+ *   get:
+ *     summary: Get property by ID (public access)
+ *     tags: [Property User]
+ *     parameters:
+ *       - in: path
+ *         name: propertyId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Property ID
+ *     responses:
+ *       200:
+ *         description: Property fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Property fetched successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     property:
+ *                       $ref: '#/components/schemas/Property'
+ *       404:
+ *         description: Property not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Property not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to fetch property"
+ */
+
+router.get("/public/:propertyId", getPropertyById);
 
 router.use([auth, role("user")]);
 
