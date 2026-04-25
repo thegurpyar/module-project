@@ -187,7 +187,7 @@ images: {
     status: {
       type: String,
       enum: ["available", "sold", "pending"],
-      default: "pending",
+      default: "available",
       index: true,
     },
 
