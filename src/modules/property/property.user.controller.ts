@@ -272,7 +272,7 @@ export const getPropertyById = async (
   try {
     const { propertyId } = req.params;
 
-    const property = await Property.findById(propertyId);
+    const property = await Property.findOne({ slug: propertyId });
 
     if (!property) {
       return errorResponse(res, "Property not found", 404);
