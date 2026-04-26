@@ -137,7 +137,12 @@ export const getProperties = async (
     if (status) filter.status = status;
     if (furnishing) filter.furnishing = furnishing;
     if (bhk) filter.bhk = Number(bhk);
-    if (sector) filter.sector = sector;
+    if (sector) {
+  filter.sector = {
+    $regex: sector,
+    $options: "i"
+  };
+}
     if (minPrice || maxPrice) {
       filter.price = {};
 
