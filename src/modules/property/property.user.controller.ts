@@ -10,8 +10,10 @@ import {
 ================================================== */
 export const addProperty = async (req: Request, res: Response) => {
   try {
+    const { notes, documents, ...otherFields } = req.body;
+
     const property = await Property.create({
-      ...req.body,
+      ...otherFields,
       userId: req.userId,
     });
 
@@ -34,6 +36,7 @@ export const addProperty = async (req: Request, res: Response) => {
 export const editProperty = async (req: Request, res: Response) => {
   try {
     const { propertyId } = req.params;
+    const { notes, documents, ...otherFields } = req.body;
 
     const property = await Property.findOne({
       _id: propertyId,
@@ -52,7 +55,7 @@ export const editProperty = async (req: Request, res: Response) => {
       );
     }
 
-    Object.assign(property, req.body);
+    Object.assign(property, otherFields);
 
     await property.save();
 
@@ -62,6 +65,7 @@ export const editProperty = async (req: Request, res: Response) => {
       "Property updated successfully"
     );
   } catch (error) {
+    console.error("Error updating property:", error);
     return errorResponse(res, "Failed to update property", 500);
   }
 };
@@ -152,6 +156,7 @@ export const getProperties = async (
 
     const [properties, total] = await Promise.all([
       Property.find(filter)
+        .select("-notes -documents") // Exclude admin-only fields
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -209,6 +214,7 @@ export const getUserProperties = async (
     
     const [properties, total] = await Promise.all([
       Property.find(filter)
+        .select("-notes -documents") // Exclude admin-only fields
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -278,7 +284,8 @@ export const getPropertyById = async (
   try {
     const { propertyId } = req.params;
 
-    const property = await Property.findOne({ slug: propertyId });
+    const property = await Property.findOne({ slug: propertyId })
+      .select("-notes -documents"); // Exclude admin-only fields
 
     if (!property) {
       return errorResponse(res, "Property not found", 404);
