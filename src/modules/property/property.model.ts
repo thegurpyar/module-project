@@ -173,9 +173,9 @@ city: {
   ],
   validate: {
     validator: function (arr) {
-      return arr.length >= 1 && arr.length <= 10;
+      return arr.length >= 0 && arr.length <= 10;
     },
-    message: "Documents must be between 1 and 10",
+    message: "Documents must be between 0 and 10",
   },
 },
 
@@ -187,9 +187,9 @@ images: {
   ],
   validate: {
     validator: function (arr) {
-      return arr.length >= 1 && arr.length <= 10;
+      return arr.length >= 0 && arr.length <= 10;
     },
-    message: "Images must be between 1 and 10",
+    message: "Images must be between 0 and 10",
   },
 },
     // OWNER / AGENT
