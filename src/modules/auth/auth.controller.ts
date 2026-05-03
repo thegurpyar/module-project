@@ -327,22 +327,19 @@ export const registerUser = async (req, res) => {
         return errorResponse(res, "User is inactive", 400);
       }
 
-      const { accessToken, refreshToken } = generateToken(user);
+      // Generate new OTP for every login
+      const otp = "9999"; // ✅ correct
+      user.otp = otp;
+      user.otpValidTill = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+      await user.save();
 
       return successResponse(
         res,
         {
-          user: {
-            id: user._id,
-            full_name: user.full_name,
-            role: user.role,
-          },
-          tokens: {
-            accessToken,
-            refreshToken,
-          },
+          message: "OTP sent for login verification",
+          number: cleanNumber,
         },
-        "Login successful",
+        "OTP sent for login verification",
         200
       );
     }
@@ -350,23 +347,24 @@ export const registerUser = async (req, res) => {
     // ================= NEW USER =================
     const otp = "9999"; // ✅ correct
 
-    if (user && !user.otpVerified){
+    if (user && !user.otpVerified) {
       user.otp = otp;
       user.otpValidTill = new Date(Date.now() + 10 * 60 * 1000); // 10 min
       await user.save();
 
-    return successResponse(
-      res,
-      {
-        message: "OTP sent successfully",
-        number: cleanNumber,
-      },
-      "User created, OTP sent",
-      201
-    );
+      return successResponse(
+        res,
+        {
+          message: "OTP sent successfully",
+          number: cleanNumber,
+        },
+        "User created, OTP sent",
+        201
+      );
     }
+
     user = await User.create({
-      full_name:full_name,
+      full_name: full_name,
       number: cleanNumber,
       role: "user",
       status: 1,
@@ -409,9 +407,6 @@ export const verifyOtp = async (req, res) => {
       return errorResponse(res, "User not found", 404);
     }
 
-    if(user.otpVerified){
-      return errorResponse(res, "Otp already verified", 400);
-    }
     if (user.otp !== otp) {
       return errorResponse(res, "Invalid OTP", 401);
     }
@@ -421,6 +416,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     user.otpVerified = true;
+    user.otp = ""; // Clear OTP after successful verification
     await user.save();
 
     const { accessToken, refreshToken } = generateToken(user);

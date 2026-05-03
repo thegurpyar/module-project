@@ -161,6 +161,23 @@ city: {
       type: String,
       trim: true,
     },
+    notes:{
+      type: String,
+      trim: true,
+    },
+    documents:{
+  type: [
+    {
+      url: String,
+    },
+  ],
+  validate: {
+    validator: function (arr) {
+      return arr.length >= 1 && arr.length <= 10;
+    },
+    message: "Documents must be between 1 and 10",
+  },
+},
 
 images: {
   type: [
@@ -170,9 +187,9 @@ images: {
   ],
   validate: {
     validator: function (arr) {
-      return arr.length >= 3 && arr.length <= 10;
+      return arr.length >= 1 && arr.length <= 10;
     },
-    message: "Images must be between 3 and 10",
+    message: "Images must be between 1 and 10",
   },
 },
     // OWNER / AGENT

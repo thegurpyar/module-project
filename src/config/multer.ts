@@ -30,11 +30,17 @@ const fileFilter = (
     // Images
     'image/jpeg',
     'image/png',
+    'image/jpg',
     'image/gif',
     'image/webp',
     'image/svg+xml',
     'image/bmp',
     'image/tiff',
+    // iPhone/Apple specific formats
+    'image/heic',    // iPhone High Efficiency Image Container
+    'image/heif',    // iPhone High Efficiency Image Format
+    'image/heic-sequence', // HEIC sequence
+    'image/heif-sequence', // HEIF sequence
     // Videos
     'video/mp4',
     'video/webm',
@@ -55,8 +61,8 @@ const fileFilter = (
   } else {
     cb(new Error(
       'Invalid file type. Only common image and video formats are allowed. ' +
-      'Allowed image formats: JPEG, PNG, GIF, WebP, SVG, BMP, TIFF. ' +
-      'Allowed video formats: MP4, WebM, OGG, MOV, AVI, WMV, MPEG, 3GP, FLV, MKV' +
+      'Allowed image formats: JPEG, PNG, GIF, WebP, SVG, BMP, TIFF, HEIC, HEIF. ' +
+      'Allowed video formats: MP4, WebM, OGG, MOV, AVI, WMV, MPEG, 3GP, FLV, MKV. ' +
       'Allowed document formats: PDF'
     ));
   }

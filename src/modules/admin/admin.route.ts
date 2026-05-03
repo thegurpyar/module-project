@@ -4,6 +4,7 @@ import {
   getUsers,
   deleteUser,
   updateUserStatus,
+  addUser,
 } from "./admin.controller";
 
 const router = Router();
@@ -15,7 +16,99 @@ const router = Router();
  *   description: Admin management APIs
  */
 
-router.use([auth, role("admin","agent")]);
+router.use([auth, role("admin")]);
+
+/**
+ * @swagger
+ * /api/admin/users:
+ *   post:
+ *     summary: Create new user (admin only)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *                 description: User's full name
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "john@example.com"
+ *                 description: User's email address
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "Password123!"
+ *                 description: User's password (will be hashed)
+ *               role:
+ *                 type: string
+ *                 enum: [agent, admin]
+ *                 example: "agent"
+ *                 description: User role (only agent or admin allowed)
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User created successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request - User already exists or invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User already exists"
+ *       403:
+ *         description: Forbidden - Only admins can create users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+
+router.post("/users", addUser);
 
 /**
  * @swagger

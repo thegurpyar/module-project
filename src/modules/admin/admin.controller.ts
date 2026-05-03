@@ -144,3 +144,35 @@ export const updateUserStatus = async (req: Request, res: Response) => {
     return errorResponse(res, "Failed to update user status", 500);
   }
 };
+
+
+export const addUser = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (req.user?.role !== "admin") {
+      return errorResponse(res, "Unauthorized", 403);
+    }
+
+    const ifExists = await User.findOne({ email });
+    if (ifExists) {
+      return errorResponse(res, "User already exists", 400);
+    }
+    
+    const user = await User.create({
+      full_name: name,
+      email,
+      password,
+      role,
+    });
+
+    return successResponse(
+      res,
+      { user },
+      "User created successfully"
+    );
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return errorResponse(res, "Failed to create user", 500);
+  }
+};
