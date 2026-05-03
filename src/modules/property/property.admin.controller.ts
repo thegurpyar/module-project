@@ -8,6 +8,45 @@ import {
 /* ==================================================
    ADMIN APPROVE PROPERTY
 ================================================== */
+
+export const addProperty = async (req: Request, res: Response) => {
+  try {
+    const { notes, documents, ...otherFields } = req.body;
+
+    // Validate documents if provided
+    if (documents && (!Array.isArray(documents) || documents.length < 1 || documents.length > 10)) {
+      return errorResponse(res, "Documents must be between 1 and 10 items", 400);
+    }
+
+    // Validate document URLs
+    if (documents) {
+      for (const doc of documents) {
+        if (!doc.url || typeof doc.url !== 'string') {
+          return errorResponse(res, "Each document must have a valid URL", 400);
+        }
+      }
+    }
+
+    const property = await Property.create({
+      ...otherFields,
+      notes: notes || "",
+      documents: documents || [],
+      userId: req.userId,
+    });
+
+    return successResponse(
+      res,
+      { property },
+      "Property added successfully"
+    );
+  } catch (error) {
+    console.error("Error adding property:", error);
+    return errorResponse(res, "Failed to add property", 500);
+  }
+};
+
+
+
 export const approveProperty = async (
   req: Request,
   res: Response
@@ -169,17 +208,39 @@ export const markPropertyAsSold = async (
 export const editProperty = async (req: Request, res: Response) => {
   try {
     const { propertyId } = req.params;
+    const { notes, documents, ...otherFields } = req.body;
 
-    const property = await Property.findOne({
-      _id: propertyId,
-    });
+    const property = await Property.findById(propertyId);
 
     if (!property) {
       return errorResponse(res, "Property not found", 404);
     }
 
+    // Validate documents if provided
+    if (documents && (!Array.isArray(documents) || documents.length < 1 || documents.length > 10)) {
+      return errorResponse(res, "Documents must be between 1 and 10 items", 400);
+    }
 
-    Object.assign(property, req.body);
+    // Validate document URLs
+    if (documents) {
+      for (const doc of documents) {
+        if (!doc.url || typeof doc.url !== 'string') {
+          return errorResponse(res, "Each document must have a valid URL", 400);
+        }
+      }
+    }
+
+    // Update fields
+    Object.assign(property, otherFields);
+    
+    // Handle notes and documents separately
+    if (notes !== undefined) {
+      property.notes = notes;
+    }
+    
+    if (documents !== undefined) {
+      property.documents = documents;
+    }
 
     await property.save();
 
@@ -189,6 +250,7 @@ export const editProperty = async (req: Request, res: Response) => {
       "Property updated successfully"
     );
   } catch (error) {
+    console.error("Error updating property:", error);
     return errorResponse(res, "Failed to update property", 500);
   }
 };

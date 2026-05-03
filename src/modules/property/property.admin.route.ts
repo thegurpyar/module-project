@@ -7,6 +7,7 @@ import {
   markPropertyAsSold,
   editProperty,
   getStat,
+  addProperty,
 } from "./property.admin.controller";
 
 const router = Router();
@@ -19,6 +20,134 @@ const router = Router();
  */
 
 router.use([auth, role("admin", "agent")]);
+
+/**
+ * @swagger
+ * /api/property/admin/:
+ *   post:
+ *     summary: Add a new property
+ *     tags: [Property Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - purpose
+ *               - category
+ *               - price
+ *               - totalArea
+ *               - city
+ *               - notes
+ *               - documents
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Beautiful 3BHK Apartment in Delhi"
+ *               purpose:
+ *                 type: string
+ *                 enum: [rent, sale]
+ *                 example: "rent"
+ *               category:
+ *                 type: string
+ *                 enum: [flat, apartment, house, villa, studio, pg, shop, office, plot, warehouse]
+ *                 example: "apartment"
+ *               price:
+ *                 type: number
+ *                 example: 25000
+ *               priceType:
+ *                 type: string
+ *                 enum: [monthly, yearly, total]
+ *                 example: "monthly"
+ *               bhk:
+ *                 type: number
+ *                 example: 3
+ *               bathrooms:
+ *                 type: number
+ *                 example: 2
+ *               totalArea:
+ *                 type: number
+ *                 example: 1200
+ *               areaUnit:
+ *                 type: string
+ *                 enum: [sqft, sqm, marla, kanal, acre]
+ *                 example: "sqft"
+ *               city:
+ *                 type: string
+ *                 example: "Delhi"
+ *               sector:
+ *                 type: string
+ *                 example: "Sector 15"
+ *               locality:
+ *                 type: string
+ *                 example: "Rohini"
+ *               landmark:
+ *                 type: string
+ *                 example: "Near Metro Station"
+ *               fullAddress:
+ *                 type: string
+ *                 example: "123 Main Street, Rohini, Delhi"
+ *               furnishing:
+ *                 type: string
+ *                 enum: [unfurnished, semi-furnished, fully-furnished]
+ *                 example: "semi-furnished"
+ *               parking:
+ *                 type: string
+ *                 enum: [none, bike, car, both]
+ *                 example: "car"
+ *               age:
+ *                 type: number
+ *                 example: 2
+ *               amenities:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   enum: [lift, gym, power_backup, swimming_pool, security, clubhouse, park, near_market]
+ *                 example: ["lift", "gym", "security"]
+ *               description:
+ *                 type: string
+ *                 example: "Spacious 3BHK apartment with modern amenities"
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       example: "https://example.com/image1.jpg"
+ *     responses:
+ *       200:
+ *         description: Property added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Property added successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     property:
+ *                       $ref: '#/components/schemas/Property'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+
+
+router.post("/", addProperty);
 
 /**
  * @swagger
@@ -128,7 +257,7 @@ router.use([auth, role("admin", "agent")]);
  *         description: Internal server error
  */
 
-router.get("/properties", getProperties);
+router.get("/", getProperties);
 
 /**
  * @swagger
@@ -253,7 +382,7 @@ router.get("/stats", getStat);
 
 /**
  * @swagger
- * /api/property/admin/properties/{propertyId}/approve:
+ * /api/property/admin/{propertyId}/approve:
  *   patch:
  *     summary: Toggle property status between pending and available
  *     tags: [Property Admin]
@@ -304,14 +433,6 @@ router.get("/stats", getStat);
  *       404:
  *         description: Property not found
  *       500:
- *         description: Internal server error
- */
-
-router.patch("/properties/:propertyId/approve", approveProperty);
-
-/**
- * @swagger
- * /api/property/admin/properties/{propertyId}/mark-sold:
  *   patch:
  *     summary: Mark property as sold
  *     tags: [Property Admin]
@@ -351,11 +472,11 @@ router.patch("/properties/:propertyId/approve", approveProperty);
  *         description: Internal server error
  */
 
-router.patch("/properties/:propertyId/mark-sold", markPropertyAsSold);
+router.patch("/:propertyId/mark-sold", markPropertyAsSold);
 
 /**
  * @swagger
- * /api/property/admin/properties/{propertyId}:
+ * /api/property/admin/{propertyId}:
  *   put:
  *     summary: Update property (admin can update any field)
  *     tags: [Property Admin]
@@ -374,11 +495,47 @@ router.patch("/properties/:propertyId/mark-sold", markPropertyAsSold);
  *         application/json:
  *           schema:
  *             type: object
- *             description: Any property fields can be updated
+ *             description: Any property fields can be updated including admin-only fields
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Updated Property Title"
+ *                 description: Property title
+ *               price:
+ *                 type: number
+ *                 example: 35000
+ *                 description: Property price
+ *               status:
+ *                 type: string
+ *                 enum: [available, sold, pending]
+ *                 example: "available"
+ *                 description: Property status
+ *               notes:
+ *                 type: string
+ *                 example: "Admin notes: Property verified, documents updated"
+ *                 description: Admin-only notes for internal use
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       example: "https://example.com/updated-document.pdf"
+ *                 example: [
+ *                   {"url": "https://example.com/ownership-doc.pdf"},
+ *                   {"url": "https://example.com/verification-doc.pdf"}
+ *                 ]
+ *                 description: Admin-only documents (1-10 documents allowed)
  *             example:
  *               title: "Updated Property Title"
  *               price: 35000
  *               status: "available"
+ *               notes: "Admin notes: Property verified, documents updated"
+ *               documents: [
+ *                 {"url": "https://example.com/ownership-doc.pdf"},
+ *                 {"url": "https://example.com/verification-doc.pdf"}
+ *               ]
  *     responses:
  *       200:
  *         description: Property updated successfully
@@ -406,11 +563,11 @@ router.patch("/properties/:propertyId/mark-sold", markPropertyAsSold);
  *         description: Internal server error
  */
 
-router.put("/properties/:propertyId", editProperty);
+router.put("/:propertyId", editProperty);
 
 /**
  * @swagger
- * /api/property/admin/properties/{propertyId}:
+ * /api/property/admin/{propertyId}:
  *   delete:
  *     summary: Delete property permanently
  *     tags: [Property Admin]
@@ -450,6 +607,6 @@ router.put("/properties/:propertyId", editProperty);
  *         description: Internal server error
  */
 
-router.delete("/properties/:propertyId", deleteProperty);
+router.delete("/:propertyId", deleteProperty);
 
 export default router;
