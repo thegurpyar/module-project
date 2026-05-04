@@ -149,6 +149,139 @@ router.use([auth, role("admin", "agent")]);
 
 router.post("/", addProperty);
 
+router.put("/approve/:propertyId", approveProperty);
+
+/**
+ * @swagger
+ * /api/property/admin/approve/{propertyId}:
+ *   put:
+ *     summary: Toggle property approval status (pending ↔ available)
+ *     tags: [Property Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     description: |
+ *       Toggles property status between 'pending' and 'available':
+ *       - If property is 'pending' → changes to 'available' (approves property)
+ *       - If property is 'available' → changes to 'pending' (unapproves property)
+ *       - Cannot toggle if property is 'sold'
+ *       
+ *       This is used by admins to control which properties are visible to users.
+ *       Only 'available' properties are shown to regular users in public listings.
+ *     parameters:
+ *       - in: path
+ *         name: propertyId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "64a1b2c3d4e5f6789012345"
+ *         description: MongoDB ObjectId of the property to toggle approval status
+ *     responses:
+ *       200:
+ *         description: Property approval status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                   description: Operation success status
+ *                 message:
+ *                   type: string
+ *                   example: "Property approved successfully"
+ *                   description: |
+ *                     Success message based on the new status:
+ *                     - "Property approved successfully" (when changed to 'available')
+ *                     - "Property pending successfully" (when changed to 'pending')
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     property:
+ *                       $ref: '#/components/schemas/Property'
+ *                   description: Updated property object with new status
+ *             examples:
+ *               approved:
+ *                 summary: Property approved (pending → available)
+ *                 value:
+ *                   success: true
+ *                   message: "Property approved successfully"
+ *                   data:
+ *                     property:
+ *                       _id: "64a1b2c3d4e5f6789012345"
+ *                       title: "Luxury Apartment"
+ *                       status: "available"
+ *               pending:
+ *                 summary: Property unapproved (available → pending)
+ *                 value:
+ *                   success: true
+ *                   message: "Property pending successfully"
+ *                   data:
+ *                     property:
+ *                       _id: "64a1b2c3d4e5f6789012345"
+ *                       title: "Luxury Apartment"
+ *                       status: "pending"
+ *       400:
+ *         description: Bad request - property cannot be toggled
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Property is already sold"
+ *                   description: Error message explaining why the operation failed
+ *             examples:
+ *               sold:
+ *                 summary: Property is already sold
+ *                 value:
+ *                   success: false
+ *                   message: "Property is already sold"
+ *       401:
+ *         description: Unauthorized - admin/agent access required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: Property not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Property not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to approve property"
+ */
+
 /**
  * @swagger
  * /api/property/admin:
