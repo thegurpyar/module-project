@@ -122,6 +122,7 @@ export const getProperties = async (
     const skip = (page - 1) * limit;
 
     const {
+      title,
       city,
       purpose,
       category,
@@ -135,6 +136,7 @@ export const getProperties = async (
 
     const filter: any = {};
 
+    if (title) filter.title = { $regex: title, $options: "i" };
     if (city) filter.city = city;
     if (purpose) filter.purpose = purpose;
     if (category) filter.category = category;
