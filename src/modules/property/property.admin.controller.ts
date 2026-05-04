@@ -29,6 +29,7 @@ export const addProperty = async (req: Request, res: Response) => {
 
     const property = await Property.create({
       ...otherFields,
+      status: "available",
       notes: notes || "",
       documents: documents || [],
       userId: req.userId,

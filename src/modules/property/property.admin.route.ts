@@ -151,7 +151,7 @@ router.post("/", addProperty);
 
 /**
  * @swagger
- * /api/property/admin/properties:
+ * /api/property/admin:
  *   get:
  *     summary: Get all properties with pagination, filters, and search
  *     tags: [Property Admin]
